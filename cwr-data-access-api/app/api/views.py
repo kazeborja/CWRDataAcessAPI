@@ -240,4 +240,4 @@ def find_work_by_id(work_id):
 
 if __name__ == "__main__":
     app.debug = True
-    app.run()
+    app.run(port=5002)
