@@ -105,7 +105,7 @@ def insert_works(works, submitter, new_works=True):
 
             publisher = Publisher(submitter, publisher_json)
 
-            mongo_agreement = AgreementRepository(
+            """mongo_agreement = AgreementRepository(
                 url_root=request.url_root).find_agreements_by_submitter_id(int(submitter), publisher.agreement_number)
 
             if mongo_agreement is None:
@@ -114,7 +114,7 @@ def insert_works(works, submitter, new_works=True):
             publisher.mongo_agreement_id = mongo_agreement['_id']
             publisher.mongo_ipa_id = InterestedPartyRepository(
                 url_root=request.url_root).find_ipa_by_submitter_id(int(submitter), publisher.interested_party_id)['_id']
-
+            """
             work.add_publisher(publisher)
 
         if json_work['_entire_work_title'] is not None and not json_work['_entire_work_title']['_rejected']:

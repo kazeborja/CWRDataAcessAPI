@@ -113,8 +113,8 @@ class Work(Entity):
         self._work_origin = WorkOrigin(json_item)
 
     def add_publisher(self, publisher):
-        print "yay"
         self._publishers.append(publisher)
+
 
 class EntireWorkTitle(object):
     """If the work is an excerpt this object reflects the entire work from where it comes"""

@@ -16,7 +16,7 @@ class Publisher(Entity):
     def to_mongo_dict(self):
         publisher_dict = {}
 
-        publisher_dict['agreement'] = self.mongo_agreement_id
-        publisher_dict['interested_party'] = self.mongo_ipa_id
+        publisher_dict['agreement'] = self.agreement_number
+        publisher_dict['interested_party'] = self.interested_party_id
 
         return publisher_dict
