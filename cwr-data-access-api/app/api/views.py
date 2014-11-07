@@ -4,19 +4,20 @@ from app.infrastructure.mongo_repos.Interested_party_repository import Intereste
 from app.infrastructure.mongo_repos.agreement_repository import AgreementRepository
 from flask import request, render_template, Flask
 from app.infrastructure.mongo_repos.work_repository import WorkRepository
+from app.initialize_db import initialize
 from commonworks.domain.models.agreement.interested_party import InterestedParty
 from commonworks.domain.models.work.publisher import Publisher
 from commonworks.domain.models.work.work import Work
+from commonworks.domain.models.agreement.agreement import Agreement
 
 app = Flask(__name__)
 
 ##########################################################################################
 ##                                 JSONP DECORATOR                                      ##
 ##########################################################################################
-from commonworks.domain.models.agreement.agreement import Agreement
 
 
-def JSONEncoder(request, data):
+def json_encoder(request, data):
     json_item = json.dumps(data)
 
     callback = request.args.get('callback', False)
@@ -25,6 +26,14 @@ def JSONEncoder(request, data):
         return Response(str(callback) + '(' + str(json_item) + ');', mimetype="application/javascript")
 
     return Response(json_item, mimetype="application/json")
+
+##########################################################################################
+##                                        VALUE ENTITIES                                ##
+##########################################################################################
+
+@app.route("/initialize")
+def initialize_values():
+    initialize(request.url_root)
 
 ##########################################################################################
 ##                                        ROOT                                          ##
@@ -105,7 +114,7 @@ def insert_works(works, submitter, new_works=True):
 
             publisher = Publisher(submitter, publisher_json)
 
-            """mongo_agreement = AgreementRepository(
+            mongo_agreement = AgreementRepository(
                 url_root=request.url_root).find_agreements_by_submitter_id(int(submitter), publisher.agreement_number)
 
             if mongo_agreement is None:
@@ -114,7 +123,7 @@ def insert_works(works, submitter, new_works=True):
             publisher.mongo_agreement_id = mongo_agreement['_id']
             publisher.mongo_ipa_id = InterestedPartyRepository(
                 url_root=request.url_root).find_ipa_by_submitter_id(int(submitter), publisher.interested_party_id)['_id']
-            """
+
             work.add_publisher(publisher)
 
         if json_work['_entire_work_title'] is not None and not json_work['_entire_work_title']['_rejected']:
@@ -134,14 +143,9 @@ def insert_works(works, submitter, new_works=True):
     WorkRepository(url_root=request.url_root).insert_items(work_list)
 
 
-@app.route("/initialize")
-def initialize():
-    AgreementRepository(url_root=request.url_root).drop_collection()
-    InterestedPartyRepository(url_root=request.url_root).drop_collection()
-    WorkRepository(url_root=request.url_root).drop_collection()
-
-    with open('data.json') as json_data:
-        json_document = json.load(json_data)
+@app.route("/persist-document")
+def persist_document():
+    json_document = request.json
 
     if not json_document:
         raise Exception
@@ -175,7 +179,7 @@ def list_agreements_page(page_number):
 
     agreements = AgreementRepository(url_root=request.url_root).find_all(page_number)
 
-    return JSONEncoder(request, agreements)
+    return json_encoder(request, agreements)
 
 
 @app.route("/agreements/submitter/<submitter_id>/<agreement_number>")
@@ -183,7 +187,7 @@ def list_agreements_by_submitter_number(submitter_id, agreement_number):
     agreement = AgreementRepository(url_root=request.url_root).find_agreement_by_submitter_id(submitter_id,
                                                                                               agreement_number)
 
-    return JSONEncoder(request, agreement)
+    return json_encoder(request, agreement)
 
 
 @app.route("/agreements/ipa/<ipa_id>")
@@ -191,7 +195,7 @@ def agreements_by_ipa(ipa_id):
 
     agreements = AgreementRepository(url_root=request.url_root).find_agreements_by_ipa(ipa_id)
 
-    return JSONEncoder(request, agreements)
+    return json_encoder(request, agreements)
 
 ##########################################################################################
 ##                                     AGREEMENTS                                       ##
@@ -208,7 +212,7 @@ def list_interested_parties_page(page_number):
 
     interested_parties = InterestedPartyRepository(url_root=request.url_root).find_all(page_number)
 
-    return JSONEncoder(request, interested_parties)
+    return json_encoder(request, interested_parties)
 
 ##########################################################################################
 ##                                     AGREEMENTS                                       ##
@@ -225,14 +229,14 @@ def list_works_page(page_number):
 
     works = WorkRepository(url_root=request.url_root).find_all(page_number)
 
-    return JSONEncoder(request, works)
+    return json_encoder(request, works)
 
 
 @app.route("/works/id/<work_id>")
 def find_work_by_id(work_id):
     work = WorkRepository(url_root=request.url_root).find_by_id(work_id)
 
-    return JSONEncoder(request, work)
+    return json_encoder(request, work)
 
 ##########################################################################################
 ##                                        MAIN                                          ##

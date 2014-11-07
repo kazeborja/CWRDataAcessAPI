@@ -98,6 +98,10 @@ class Work(Entity):
         for publisher in self._publishers:
             work_dict['publishers'].append(publisher.to_mongo_dict())
 
+        work_dict['performers'] = []
+        for performer in self._performing_artists:
+            work_dict['performers'].append(performer.to_mongo_dict())
+
         return work_dict
 
     def set_entire_work_title(self, json_item):
@@ -185,6 +189,7 @@ class OriginalWorkTitle(object):
 
         return original_title_dict
 
+
 class RecordingDetails(object):
     def __init__(self, json_item):
         self.first_release_date = json_item['first_release_date']
@@ -255,6 +260,22 @@ class WorkOrigin(object):
         origin_dict['avi_key_number'] = self.avi_key_number
 
         return origin_dict
+
+
+class PerformingArtist(object):
+    def __init__(self, json_item):
+        self.last_name = json_item['last_name']
+        self.first_name = json_item['first_name']
+        self.cae_ipi_name = json_item['cae_ipi_name']
+        self.ipi_base_number = json_item['ipi_base_number']
+
+    def to_mongo_dict(self):
+        artist_dict = {}
+
+        artist_dict['last_name'] = self.last_name
+        artist_dict['first_name'] = self.first_name
+        artist_dict['cae_ipi_name'] = self.cae_ipi_name
+        artist_dict['ipi_base_number'] = self.ipi_base_number
 
 
 class Repository(object):
