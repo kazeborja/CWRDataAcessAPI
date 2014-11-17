@@ -3,6 +3,7 @@ from flask.wrappers import Response
 from app.infrastructure.mongo_repos.Interested_party_repository import InterestedPartyRepository
 from app.infrastructure.mongo_repos.agreement_repository import AgreementRepository
 from flask import request, render_template, Flask
+from app.infrastructure.mongo_repos.value_entities_repository import ValueEntityRepository
 from app.infrastructure.mongo_repos.work_repository import WorkRepository
 from app.initialize_db import initialize
 from commonworks.domain.models.agreement.interested_party import InterestedParty
@@ -35,6 +36,10 @@ def json_encoder(request, data):
 def initialize_values():
     initialize(request.url_root)
 
+    work_types = ValueEntityRepository(url_root=request.url_root, collection='work_types').find_all(0)
+
+    return json_encoder(request, work_types)
+
 ##########################################################################################
 ##                                        ROOT                                          ##
 ##########################################################################################
@@ -43,7 +48,10 @@ def initialize_values():
 @app.route("/")
 def index():
     """API Documentation"""
-    return render_template('help.html')
+    # return render_template('help.html')
+    work_types = ValueEntityRepository(url_root=request.url_root, collection='work_types').find_all(0)
+
+    return json_encoder(request, work_types)
 
 
 def insert_agreements(agreements, submitter):
@@ -143,7 +151,7 @@ def insert_works(works, submitter, new_works=True):
     WorkRepository(url_root=request.url_root).insert_items(work_list)
 
 
-@app.route("/persist-document")
+@app.route("/persist-document/", methods=['POST'])
 def persist_document():
     json_document = request.json
 

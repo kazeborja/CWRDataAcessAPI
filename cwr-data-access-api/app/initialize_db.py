@@ -50,7 +50,7 @@ def _add_distribution_categories(url_root):
 
 
 def _add_excerpt_types(url_root):
-    excerpt_types_service = ValueEntityRepository(url_root=url_root, collection='exceprt_types')
+    excerpt_types_service = ValueEntityRepository(url_root=url_root, collection='excerpt_types')
     excerpt_types_service.insert_item(ExcerptType('MOV', 'Movement', 'A principal division of a musical work'))
     excerpt_types_service.insert_item(ExcerptType('UEX', 'Unspecified Excerpt',
                                              'A work that is known to be an excerpt from another work, however the type of excerpt is unknown'))

@@ -1,5 +1,5 @@
 __author__ = 'borja'
 
-host = '127.0.0.1'
-port = 27017
+host = '156.35.82.103'
+port = 9090
 db_name = 'commonworks'
