@@ -102,6 +102,14 @@ class Work(Entity):
         for performer in self._performing_artists:
             work_dict['performers'].append(performer.to_mongo_dict())
 
+        work_dict['writers'] = []
+        for writer in self._writers:
+            work_dict['writers'].append(writer.to_mongo_dict())
+
+        work_dict['alternative_titles'] = []
+        for alt_title in self._alternative_titles:
+            work_dict['alternative_titles'].append(alt_title.to_mongo_dict())
+
         return work_dict
 
     def set_entire_work_title(self, json_item):
@@ -116,9 +124,30 @@ class Work(Entity):
     def set_work_origin(self, json_item):
         self._work_origin = WorkOrigin(json_item)
 
+    def add_alternative_title(self, alternative_title):
+        self._alternative_titles.append(alternative_title)
+
     def add_publisher(self, publisher):
         self._publishers.append(publisher)
 
+    def add_performer(self, performer):
+        self._performing_artists.append(performer)
+
+    def add_writer(self, writer):
+        self._writers.append(writer)
+
+class AlternativeWorkTitle(object):
+    def __init__(self, json_item):
+        self.alternate_title = json_item['alternate_title']
+        self.title_type = json_item['title_type']
+
+    def to_mongo_dict(self):
+        alternative_title_dict = {}
+
+        alternative_title_dict['title'] = self.alternate_title
+        alternative_title_dict['type'] = self.title_type
+
+        return alternative_title_dict
 
 class EntireWorkTitle(object):
     """If the work is an excerpt this object reflects the entire work from where it comes"""
@@ -276,6 +305,8 @@ class PerformingArtist(object):
         artist_dict['first_name'] = self.first_name
         artist_dict['cae_ipi_name'] = self.cae_ipi_name
         artist_dict['ipi_base_number'] = self.ipi_base_number
+
+        return artist_dict
 
 
 class Repository(object):

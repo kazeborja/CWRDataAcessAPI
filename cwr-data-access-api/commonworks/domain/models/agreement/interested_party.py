@@ -9,7 +9,6 @@ class InterestedParty(Entity):
     def __init__(self, submitter_id, json_item):
         super(InterestedParty, self).__init__(submitter_id)
 
-        self.agreement_role_code = json_item['agreement_role_code']
         self.cae_ipi_id = json_item['cae_ipi_id']
         self.ipi_base_number = json_item['ipi_base_number']
         self.id = json_item['id']
@@ -26,7 +25,6 @@ class InterestedParty(Entity):
         ipa_dict['_id'] = self.creation_id
         ipa_dict['submitter_id'] = self.submitter_id
 
-        ipa_dict['agreement_role_code'] = self.agreement_role_code
         ipa_dict['cae_ipi_id'] = self.cae_ipi_id
         ipa_dict['ipi_base_number'] = self.ipi_base_number
         ipa_dict['ipa_number'] = self.id
@@ -49,6 +47,7 @@ class Agreement(object):
     def __init__(self, agreement_id, json_item):
         self.agreement_id = agreement_id
 
+        self.agreement_role_code = json_item['agreement_role_code']
         self.pr_society = json_item['pr_society']
         self.pr_share = json_item['pr_share']
         self.mr_society = json_item['mr_society']
@@ -60,6 +59,7 @@ class Agreement(object):
         agr_dict = {}
 
         agr_dict['agreement_id'] = self.agreement_id
+        agr_dict['role_code'] = self.agreement_role_code
         agr_dict['pr_society'] = self.pr_society
         agr_dict['pr_share'] = self.pr_share
         agr_dict['mr_society'] = self.mr_society
@@ -68,6 +68,7 @@ class Agreement(object):
         agr_dict['sr_share'] = self.sr_share
 
         return agr_dict
+
 
 class Repository(object):
     __metaclass__ = ABCMeta
